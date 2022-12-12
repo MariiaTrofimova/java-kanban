@@ -14,16 +14,13 @@ public class Epic extends Task {
         return subtaskIds;
     }
 
-    public void setSubtaskId(int subtaskId) {
+    public void addSubtask(int subtaskId) {
         subtaskIds.add(subtaskId);
     }
 
-    public void removeSubtaskId(int subtaskId) {
+    public void removeSubtaskId(Integer subtaskId) {
         if (!subtaskIds.contains(subtaskId)) {
             System.out.println("Такой подзадачи не существует");
-            return;
-        } else if (subtaskIds.size() == 1) {
-            subtaskIds.clear();
             return;
         }
         subtaskIds.remove(subtaskId);

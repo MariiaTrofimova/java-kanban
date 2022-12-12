@@ -1,12 +1,14 @@
 package model;
 
+import model.Status;
+
 public class Task {
     protected int id;
     protected String title;
     protected String description;
-    protected String status;
+    protected Status status;
 
-    public Task(int id, String title, String description, String status) {
+    public Task(int id, String title, String description, Status status) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -17,7 +19,7 @@ public class Task {
         this.id = id;
         this.title = title;
         this.description = description;
-        status = "NEW";
+        status = Status.NEW;
     }
 
     public int getId() {
@@ -40,11 +42,11 @@ public class Task {
         this.description = description;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

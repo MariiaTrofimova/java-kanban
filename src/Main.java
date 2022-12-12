@@ -1,4 +1,5 @@
 import model.Epic;
+import model.Status;
 import model.Subtask;
 import model.Task;
 import service.TaskManager;
@@ -39,11 +40,11 @@ public class Main {
         printLists(taskManager);
 
         //Измените статусы созданных объектов,
-        taskManager.updateTaskStatus(0, "IN_PROGRESS");
-        taskManager.updateTaskStatus(1, "IN_PROGRESS");
-        taskManager.updateSubtaskStatus(3, "DONE");
-        taskManager.updateSubtaskStatus(4, "IN_PROGRESS");
-        taskManager.updateSubtaskStatus(6, "DONE");
+        taskManager.updateTaskStatus(0, Status.IN_PROGRESS);
+        taskManager.updateTaskStatus(1, Status.IN_PROGRESS);
+        taskManager.updateSubtaskStatus(3, Status.DONE);
+        taskManager.updateSubtaskStatus(4, Status.IN_PROGRESS);
+        taskManager.updateSubtaskStatus(6, Status.DONE);
 
         // распечатайте.
         System.out.println("-".repeat(20) + "Измените статусы созданных объектов" + "-".repeat(20));
@@ -60,7 +61,7 @@ public class Main {
 
         //Для тестирования добавила удаление подзадачи.
         taskManager.removeSubtask(6);
-        
+
         // Печать результата
         System.out.println("-".repeat(20) + "Для тестирования добавила удаление подзадачи"
                 + "-".repeat(20));
