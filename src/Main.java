@@ -61,7 +61,7 @@ public class Main {
 
     public static void printHistory() {
         System.out.println("История просмотров:");
-        if (Managers.getDefaultHistory().getHistory() != null) {
+        if (!Managers.getDefaultHistory().getHistory().isEmpty()) {
             for (Task task : Managers.getDefaultHistory().getHistory()) {
                 System.out.println(task);
             }
@@ -70,19 +70,19 @@ public class Main {
 
     public static void printLists(InMemoryTaskManager taskManager) {
         System.out.println("Список задач:");
-        if (taskManager.getTasksList() != null) {
+        if (!taskManager.getTasksList().isEmpty()) {
             for (Task task : taskManager.getTasksList()) {
                 System.out.println(task);
             }
         }
         System.out.println("Список эпиков:");
-        if (taskManager.getEpicsList() != null) {
+        if (!taskManager.getEpicsList().isEmpty()) {
             for (Task epic : taskManager.getEpicsList()) {
                 System.out.println(epic);
             }
         }
         System.out.println("Список подзадач:");
-        if (taskManager.getSubtasksList() != null) {
+        if (!taskManager.getSubtasksList().isEmpty()) {
             for (Task subtask : taskManager.getSubtasksList()) {
                 System.out.println(subtask);
             }
