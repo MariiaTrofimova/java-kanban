@@ -3,6 +3,8 @@ import model.Status;
 import model.Subtask;
 import model.Task;
 
+import service.HistoryManager;
+import service.InMemoryHistoryManager;
 import service.InMemoryTaskManager;
 import service.Managers;
 
@@ -13,48 +15,63 @@ public class Main {
         taskManager.clearTasks();
         taskManager.clearEpics();
 
+        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+
         //Создайте несколько задач разного типа
         System.out.println("-".repeat(20)
-                + "Создайте несколько задач разного типа"
+                + "Создайте две задачи, эпик с тремя подзадачами и эпик без подзадач"
                 + "-".repeat(20));
 
-        taskManager.createTask(new Task("Дожить до Нового года", "Как-нибудь постараемся"));
-        taskManager.createTask(new Task("Встретить Новый год", "Как-нибудь тоже справимся"));
+        taskManager.createTask(new Task("Закончить кашлять", "Лежи"));
+        taskManager.createTask(new Task("Убрать квартиру", "До вторника"));
 
         Epic epic = new Epic("Покормить кота",
-                "Если не покормить — будет кусь и ночной тыгыдык");
+                "Два раза в день");
         taskManager.createEpic(epic);
-        taskManager.createSubtask((new Subtask("Купить корм", "Pro Plan 1,5 кг")), epic.getId());
+        taskManager.createSubtask((new Subtask("Помыть миски", "Без мыла")), epic.getId());
         taskManager.createSubtask((new Subtask("Положить корм", "Две ложки")), epic.getId());
+        taskManager.createSubtask((new Subtask("Налить воды", "Без минералов")), epic.getId());
 
-        epic = new Epic("Подготовиться к приходу гостей", "Дом должен быть чистым и хорошо пахнуть");
-
+        epic = new Epic("Поехать в отпуск", "И постараться до него дожить");
         taskManager.createEpic(epic);
-        taskManager.createSubtask((new Subtask("Убрать лоток кота",
-                "Если опилки закончились, свежие взять на балконе за лыжами")), epic.getId());
-        printLists(taskManager);
-        printHistory();
 
-        //Вызовите разные методы интерфейса TaskManager и напечатайте историю просмотров после каждого вызова.
+        printLists(taskManager);
+
+        //Запросите созданные задачи несколько раз в разном порядке;
+        //после каждого запроса выведите историю и убедитесь, что в ней нет повторов;
         System.out.println("-".repeat(20)
-                + "Вызовите разные методы интерфейса TaskManager и напечатайте историю просмотров после каждого вызова."
+                + "Запросите созданные задачи несколько раз в разном порядке."
                 + "-".repeat(20));
 
-        taskManager.updateTask(new Task(0, "Дожить до Нового года", "Как-нибудь постараемся",
-                Status.IN_PROGRESS));
+        taskManager.getEpic(6);
         printHistory();
-
-        taskManager.updateSubtask(new Subtask(3, "Купить корм", "Pro Plan 1,5 кг", Status.DONE, 2));
-        printHistory();
-
-        taskManager.getEpic(5);
-        printHistory();
-
         taskManager.getSubtask(3);
         printHistory();
-
+        taskManager.getSubtask(4);
+        printHistory();
+        taskManager.getTask(1);
+        printHistory();
+        taskManager.getEpic(6);
+        printHistory();
         taskManager.getTask(0);
+        printHistory();
+        taskManager.getEpic(2);
+        printHistory();
+        taskManager.getSubtask(5);
+        printHistory();
+        taskManager.getSubtask(4);
+        printHistory();
 
+        System.out.println("-".repeat(20)
+                + "Удалите задачу, которая есть в истории, и проверьте, что при печати она не будет выводиться"
+                + "-".repeat(20));
+        taskManager.removeTask(0);
+        printHistory();
+        
+        System.out.println("-".repeat(20)
+                + "Удалите эпик с тремя подзадачами и убедитесь, что из истории удалился "
+                + "как сам эпик, так и все его подзадачи."
+                + "-".repeat(20));
         taskManager.removeEpic(2);
         printHistory();
     }
