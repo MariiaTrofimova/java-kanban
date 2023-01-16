@@ -1,12 +1,9 @@
 import model.Epic;
-import model.Status;
 import model.Subtask;
 import model.Task;
 
 import service.HistoryManager;
-import service.InMemoryHistoryManager;
 import service.InMemoryTaskManager;
-import service.Managers;
 
 public class Main {
 
@@ -14,8 +11,6 @@ public class Main {
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
         taskManager.clearTasks();
         taskManager.clearEpics();
-
-        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
 
         //Создайте несколько задач разного типа
         System.out.println("-".repeat(20)
@@ -44,42 +39,42 @@ public class Main {
                 + "-".repeat(20));
 
         taskManager.getEpic(6);
-        printHistory();
+        printHistory(taskManager.getHistoryManager());
         taskManager.getSubtask(3);
-        printHistory();
+        printHistory(taskManager.getHistoryManager());
         taskManager.getSubtask(4);
-        printHistory();
+        printHistory(taskManager.getHistoryManager());
         taskManager.getTask(1);
-        printHistory();
+        printHistory(taskManager.getHistoryManager());
         taskManager.getEpic(6);
-        printHistory();
+        printHistory(taskManager.getHistoryManager());
         taskManager.getTask(0);
-        printHistory();
+        printHistory(taskManager.getHistoryManager());
         taskManager.getEpic(2);
-        printHistory();
+        printHistory(taskManager.getHistoryManager());
         taskManager.getSubtask(5);
-        printHistory();
+        printHistory(taskManager.getHistoryManager());
         taskManager.getSubtask(4);
-        printHistory();
+        printHistory(taskManager.getHistoryManager());
 
         System.out.println("-".repeat(20)
                 + "Удалите задачу, которая есть в истории, и проверьте, что при печати она не будет выводиться"
                 + "-".repeat(20));
         taskManager.removeTask(0);
-        printHistory();
-        
+        printHistory(taskManager.getHistoryManager());
+
         System.out.println("-".repeat(20)
                 + "Удалите эпик с тремя подзадачами и убедитесь, что из истории удалился "
                 + "как сам эпик, так и все его подзадачи."
                 + "-".repeat(20));
         taskManager.removeEpic(2);
-        printHistory();
+        printHistory(taskManager.getHistoryManager());
     }
 
-    public static void printHistory() {
+    public static void printHistory(HistoryManager historyManager) {
         System.out.println("История просмотров:");
-        if (!Managers.getDefaultHistory().getHistory().isEmpty()) {
-            for (Task task : Managers.getDefaultHistory().getHistory()) {
+        if (!historyManager.getHistory().isEmpty()) {
+            for (Task task : historyManager.getHistory()) {
                 System.out.println(task);
             }
         }
