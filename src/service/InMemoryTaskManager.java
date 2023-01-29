@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class InMemoryTaskManager implements TaskManager {
-    private int nextId = 0;
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    protected int nextId = 0;
+    protected HashMap<Integer, Task> tasks = new HashMap<>();
+    protected HashMap<Integer, Epic> epics = new HashMap<>();
+    protected HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected HistoryManager historyManager = Managers.getDefaultHistory();
 
     public HistoryManager getHistoryManager() {
         return historyManager;
@@ -58,7 +58,7 @@ public class InMemoryTaskManager implements TaskManager {
         return epicSubtasks;
     }
 
-    private void setEpicStatus(Subtask subtask) {
+    protected void setEpicStatus(Subtask subtask) {
         int epicId = subtask.getEpicId();
         Epic epic = epics.get(epicId);
         Status status = epic.getStatus();
@@ -92,7 +92,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private void calculateEpicStatus(int id) {
+    protected void calculateEpicStatus(int id) {
         if (getEpicSubtasks(id).isEmpty()) {
             epics.get(id).setStatus(Status.NEW);
             return;
@@ -150,19 +150,19 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void createTask(Task task) {
+    public void addTask(Task task) {
         task.setId(nextId++);
         tasks.put(task.getId(), task);
     }
 
     @Override
-    public void createEpic(Epic epic) {
+    public void addEpic(Epic epic) {
         epic.setId(nextId++);
         epics.put(epic.getId(), epic);
     }
 
     @Override
-    public void createSubtask(Subtask subtask, int epicId) {
+    public void addSubtask(Subtask subtask, int epicId) {
         subtask.setId(nextId++);
         subtask.setEpicId(epicId);
         subtasks.put(subtask.getId(), subtask);
@@ -171,6 +171,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epics.get(epicId).getStatus() == Status.DONE) {
             epics.get(epicId).setStatus(Status.IN_PROGRESS);
         }
+
     }
 
     @Override

@@ -1,0 +1,9 @@
+id,type,name,status,description,epic
+0,TASK,Сдать ТЗ,NEW,Постарайся,
+1,EPIC,Покормить кота,IN_PROGRESS,Два раза в день,
+5,EPIC,Оклематься,NEW,Лежи,
+2,SUBTASK,Помыть миски,NEW,Без мыла,1
+3,SUBTASK,Положить корм,DONE,Две ложки,1
+4,SUBTASK,Налить воды,NEW,Без минералов,1
+
+5,0,3,4

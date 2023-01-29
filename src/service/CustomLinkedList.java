@@ -4,6 +4,7 @@ import model.Node;
 import model.Task;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,15 +32,13 @@ public final class CustomLinkedList {
 
     public ArrayList<Task> getTasks() {
         ArrayList<Task> tasks = new ArrayList<>();
-        if (nodes.isEmpty()) {
-            System.out.println("История пуста");
-        } else if (nodes.size() == 1) {
-            tasks.add(tail.getTask());
-        } else {
-            Node node = head;
-            while (node != tail) {
-                tasks.add(node.getTask());
-                node = node.getNext();
+        if (!nodes.isEmpty()) {
+            if (nodes.size() != 1) {
+                Node node = head;
+                while (node != tail) {
+                    tasks.add(node.getTask());
+                    node = node.getNext();
+                }
             }
             tasks.add(tail.getTask());
         }

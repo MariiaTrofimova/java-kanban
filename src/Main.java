@@ -17,18 +17,18 @@ public class Main {
                 + "Создайте две задачи, эпик с тремя подзадачами и эпик без подзадач"
                 + "-".repeat(20));
 
-        taskManager.createTask(new Task("Закончить кашлять", "Лежи"));
-        taskManager.createTask(new Task("Убрать квартиру", "До вторника"));
+        taskManager.addTask(new Task("Закончить кашлять", "Лежи"));
+        taskManager.addTask(new Task("Убрать квартиру", "До вторника"));
 
         Epic epic = new Epic("Покормить кота",
                 "Два раза в день");
-        taskManager.createEpic(epic);
-        taskManager.createSubtask((new Subtask("Помыть миски", "Без мыла")), epic.getId());
-        taskManager.createSubtask((new Subtask("Положить корм", "Две ложки")), epic.getId());
-        taskManager.createSubtask((new Subtask("Налить воды", "Без минералов")), epic.getId());
+        taskManager.addEpic(epic);
+        taskManager.addSubtask((new Subtask("Помыть миски", "Без мыла")), epic.getId());
+        taskManager.addSubtask((new Subtask("Положить корм", "Две ложки")), epic.getId());
+        taskManager.addSubtask((new Subtask("Налить воды", "Без минералов")), epic.getId());
 
         epic = new Epic("Поехать в отпуск", "И постараться до него дожить");
-        taskManager.createEpic(epic);
+        taskManager.addEpic(epic);
 
         printLists(taskManager);
 
