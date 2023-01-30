@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
@@ -51,17 +52,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         FileBackedTasksManager managerFromFile = loadFromFile(file);
         System.out.println("-".repeat(10) + "Содержимое менеджера из файла" + "-".repeat(10));
         System.out.println("id,type,name,status,description,epic");
-        for (Task task : managerFromFile.getTasksList()) {
-            System.out.println(toString(task));
-        }
-        for (Task task : managerFromFile.getEpicsList()) {
-            System.out.println(toString(task));
-        }
-        for (Task task : managerFromFile.getSubtasksList()) {
-            System.out.println(toString(task));
-        }
-        System.out.println("\n" + historyToString(managerFromFile.historyManager));
+        printManager(managerFromFile);
         System.out.println("-".repeat(48));
+
+        //Проверка идентификатора nextId
+        managerFromFile.addTask(new Task("Проверить nextId", "Должно быть max + 1"));
+        managerFromFile.getTask(managerFromFile.nextId - 1);
+        managerFromFile.addSubtask((new Subtask("Ешь витамины", "Не запивая кофе")), 5);
+        managerFromFile.getSubtask(managerFromFile.nextId - 1);
+
+        System.out.println("-".repeat(2) + "Проверка идентификатора в менеджере из файла" + "-".repeat(2));
+        printManager(managerFromFile);
     }
 
     void save() throws ManagerSaveException {
@@ -171,6 +172,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     historyManager.add(managerFromFile.tasks.get(id));
                 }
             }
+            managerFromFile.nextId = Collections.max(history) + 1;
         } catch (IOException e) {
             System.out.println("Невозможно прочитать файл.");
         }
@@ -268,5 +270,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public void removeSubtask(int id) {
         super.removeSubtask(id);
         save();
+    }
+
+    private static void printManager (FileBackedTasksManager manager) {
+        for (Task task : manager.getTasksList()) {
+            System.out.println(toString(task));
+        }
+        for (Task task : manager.getEpicsList()) {
+            System.out.println(toString(task));
+        }
+        for (Task task : manager.getSubtasksList()) {
+            System.out.println(toString(task));
+        }
+        System.out.println("\n" + historyToString(manager.historyManager));
     }
 }
