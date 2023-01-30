@@ -146,10 +146,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager managerFromFile = new FileBackedTasksManager(file);
         try {
+            int maxId = 0;
             String content = Files.readString(Path.of(String.valueOf(file)));
             String[] lines = content.split("\n");
             for (int i = 1; i < lines.length - 2; i++) {
                 Task task = managerFromFile.fromString(lines[i]);
+                if (task.getId() > maxId) {
+                    maxId = task.getId();
+                }
                 if (task instanceof Epic) {
                     managerFromFile.epics.put(task.getId(), (Epic) task);
                 } else if (task instanceof Subtask) {
@@ -172,7 +176,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     historyManager.add(managerFromFile.tasks.get(id));
                 }
             }
-            managerFromFile.nextId = Collections.max(history) + 1;
+            managerFromFile.nextId = maxId + 1;
         } catch (IOException e) {
             System.out.println("Невозможно прочитать файл.");
         }
