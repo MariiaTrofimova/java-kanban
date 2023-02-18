@@ -22,7 +22,7 @@ public final class CustomLinkedList {
         Node newNode = new Node(oldTail, task, null);
         tail = newNode;
 
-        if (oldTail == null) {
+        if ((oldTail == null) || (head == null)) {
             head = newNode;
         } else {
             oldTail.setNext(newNode);

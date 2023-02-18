@@ -38,36 +38,36 @@ public class Main {
                 + "Запросите созданные задачи несколько раз в разном порядке."
                 + "-".repeat(20));
 
-        taskManager.getEpic(6);
-        printHistory(taskManager.getHistoryManager());
-        taskManager.getSubtask(3);
+        taskManager.getEpic(7);
         printHistory(taskManager.getHistoryManager());
         taskManager.getSubtask(4);
-        printHistory(taskManager.getHistoryManager());
-        taskManager.getTask(1);
-        printHistory(taskManager.getHistoryManager());
-        taskManager.getEpic(6);
-        printHistory(taskManager.getHistoryManager());
-        taskManager.getTask(0);
-        printHistory(taskManager.getHistoryManager());
-        taskManager.getEpic(2);
         printHistory(taskManager.getHistoryManager());
         taskManager.getSubtask(5);
         printHistory(taskManager.getHistoryManager());
-        taskManager.getSubtask(4);
+        taskManager.getTask(2);
+        printHistory(taskManager.getHistoryManager());
+        taskManager.getEpic(7);
+        printHistory(taskManager.getHistoryManager());
+        taskManager.getTask(1);
+        printHistory(taskManager.getHistoryManager());
+        taskManager.getEpic(3);
+        printHistory(taskManager.getHistoryManager());
+        taskManager.getSubtask(6);
+        printHistory(taskManager.getHistoryManager());
+        taskManager.getSubtask(5);
         printHistory(taskManager.getHistoryManager());
 
         System.out.println("-".repeat(20)
                 + "Удалите задачу, которая есть в истории, и проверьте, что при печати она не будет выводиться"
                 + "-".repeat(20));
-        taskManager.removeTask(0);
+        taskManager.removeTask(1);
         printHistory(taskManager.getHistoryManager());
 
         System.out.println("-".repeat(20)
                 + "Удалите эпик с тремя подзадачами и убедитесь, что из истории удалился "
                 + "как сам эпик, так и все его подзадачи."
                 + "-".repeat(20));
-        taskManager.removeEpic(2);
+        taskManager.removeEpic(3);
         printHistory(taskManager.getHistoryManager());
     }
 
@@ -82,20 +82,20 @@ public class Main {
 
     public static void printLists(InMemoryTaskManager taskManager) {
         System.out.println("Список задач:");
-        if (!taskManager.getTasksList().isEmpty()) {
-            for (Task task : taskManager.getTasksList()) {
+        if (!taskManager.getTasks().isEmpty()) {
+            for (Task task : taskManager.getTasks()) {
                 System.out.println(task);
             }
         }
         System.out.println("Список эпиков:");
-        if (!taskManager.getEpicsList().isEmpty()) {
-            for (Task epic : taskManager.getEpicsList()) {
+        if (!taskManager.getEpics().isEmpty()) {
+            for (Task epic : taskManager.getEpics()) {
                 System.out.println(epic);
             }
         }
         System.out.println("Список подзадач:");
-        if (!taskManager.getSubtasksList().isEmpty()) {
-            for (Task subtask : taskManager.getSubtasksList()) {
+        if (!taskManager.getSubtasks().isEmpty()) {
+            for (Task subtask : taskManager.getSubtasks()) {
                 System.out.println(subtask);
             }
         }

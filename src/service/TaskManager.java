@@ -5,17 +5,21 @@ import model.Subtask;
 import model.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public interface TaskManager {
+    HistoryManager getHistoryManager();
 
-    ArrayList<Task> getTasksList();
+    ArrayList<Task> getTasks();
 
-    ArrayList<Task> getEpicsList();
+    ArrayList<Epic> getEpics();
 
-    ArrayList<Task> getSubtasksList();
+    ArrayList<Subtask> getSubtasks();
 
     ArrayList<Subtask> getEpicSubtasks(int id);
+
+    List<Task> getPrioritizedTasks();
 
     void clearTasks();
 
