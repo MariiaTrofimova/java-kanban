@@ -1,6 +1,6 @@
-id,type,name,status,description,epic,duration,startTime
-1,TASK,Task,NEW,Task description, , , 
-2,EPIC,Epic,NEW,Epic description, ,1,01.01.2023 10:30
-3,SUBTASK,Subtask,NEW,Subtask description,2,1,01.01.2023 10:30
+id,type,name,status,description,epic,duration,startTime,endTime
+1,TASK,Task,NEW,Task description, , , , 
+2,EPIC,Epic,NEW,Epic description, ,1,01.01.2023 10:30,01.01.2023 10:31
+3,SUBTASK,Subtask,NEW,Subtask description,2,1,01.01.2023 10:30, 
 
 1,2

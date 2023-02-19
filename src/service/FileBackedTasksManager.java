@@ -56,13 +56,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         manager.getTask(1);
         manager.getSubtask(4);
         manager.getSubtask(5);
+        System.out.println("-".repeat(10) + "Содержимое менеджера" + "-".repeat(10));
+        System.out.println("id,type,name,status,description,epic,duration,startTime,endTime");
+        printManager(manager);
+        System.out.println("-".repeat(48));
 
         //Создайте новый FileBackedTasksManager менеджер из этого же файла.
         //Проверьте, что история просмотра восстановилась верно
         // и все задачи, эпики, подзадачи, которые были в старом, есть в новом менеджере.
         FileBackedTasksManager managerFromFile = loadFromFile(file);
         System.out.println("-".repeat(10) + "Содержимое менеджера из файла" + "-".repeat(10));
-        System.out.println("id,type,name,status,description,epic,duration,startTime");
+        System.out.println("id,type,name,status,description,epic,duration,startTime,endTime");
         printManager(managerFromFile);
         System.out.println("-".repeat(48));
 
@@ -77,7 +81,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         managerFromFile.updateSubtask(updateSubtask);
 
         System.out.println("-".repeat(2) + "Проверка идентификатора в менеджере из файла" + "-".repeat(2));
-        System.out.println("id,type,name,status,description,epic,duration,startTime");
+        System.out.println("id,type,name,status,description,epic,duration,startTime,endTime");
         printManager(managerFromFile);
 
         //Проверим getPrioritizedTasks()
@@ -93,7 +97,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public void save() throws ManagerSaveException {
         try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8)) {
-            fileWriter.write("id,type,name,status,description,epic,duration,startTime\n");
+            fileWriter.write("id,type,name,status,description,epic,duration,startTime,endTime\n");
             if (!tasks.isEmpty()) {
                 for (Task task : getTasks()) {
                     fileWriter.write(toString(task) + "\n");
@@ -122,29 +126,33 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String epicId = " ";
         String startTime = " ";
         String duration = " ";
+        String endTime = " ";
         if (taskType == TaskType.SUBTASK) epicId = String.valueOf(((Subtask) task).getEpicId());
         if (task.getStartTime().isPresent()) {
             startTime = task.getStartTime().get().format(task.getFormatter());
+            if (taskType == TaskType.EPIC) {
+                endTime = task.getEndTime().get().format(task.getFormatter());
+            }
         }
         if (task.getDuration().isPresent()) {
             duration = String.valueOf(task.getDuration().get());
         }
 
-        return String.format("%s,%s,%s,%s,%s,%s,%s,%s",
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s",
                 task.getId(), taskType, task.getTitle(), task.getStatus(), task.getDescription(), epicId,
-                duration, startTime);
+                duration, startTime, endTime);
     }
 
     public Task fromString(String value) {
         if (value.isBlank()) {
             throw new IllegalArgumentException("Чтение пустой строки невозможно");
-        } else if (value.split(",").length != 8) {
+        } else if (value.split(",").length != 9) {
             throw new IllegalArgumentException("Неверное число элементов в строке");
         }
-
         String[] split = value.split(",");
         Status status = Status.valueOf(split[3]);
         Optional<LocalDateTime> startTime;
+        Optional<LocalDateTime> endTime;
         Optional<Long> duration;
         if (split[6].isBlank()) {
             duration = Optional.empty();
@@ -156,12 +164,22 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } else {
             startTime = Optional.of(LocalDateTime.parse(split[7], Task.formatter));
         }
+        if (!split[8].isBlank() && split[1].equals("EPIC")) {
+            endTime = Optional.of(LocalDateTime.parse(split[8], Task.formatter));
+        } else {
+            endTime = Optional.empty();
+        }
         switch (split[1]) {
             case "TASK":
                 return new Task(Integer.parseInt(split[0]), split[2], split[4], status,
                         duration, startTime);
             case "EPIC":
-                return new Epic(Integer.parseInt(split[0]), split[2], split[4]);
+                Epic epic = new Epic(Integer.parseInt(split[0]), split[2], split[4]);
+                epic.setStatus(status);
+                epic.setStartTime(startTime);
+                epic.setDuration(duration);
+                epic.setEndTime(endTime);
+                return epic;
             case "SUBTASK":
                 return new Subtask(Integer.parseInt(split[0]), split[2], split[4], status, Integer.parseInt(split[5]),
                         duration, startTime);
@@ -210,7 +228,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 if (task.getId() > maxId) {
                     maxId = task.getId();
                 }
-                //добавить обновление времени эпиков
                 switch (taskType) {
                     case EPIC:
                         managerFromFile.epics.put(task.getId(), (Epic) task);
@@ -220,12 +237,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         int epicId = ((Subtask) task).getEpicId();
                         Epic epic = managerFromFile.epics.get(epicId);
                         epic.addSubtask(task.getId());
-                        epic.setStatusBySubtask((Subtask) task, managerFromFile.subtasks);
-                        if (task.getStartTime().isPresent()) {
-                            epic.setStartTime(managerFromFile.subtasks);
-                            epic.setEndTime(managerFromFile.subtasks);
-                            epic.setDuration(managerFromFile.subtasks);
-                        }
                         managerFromFile.prioritizedTasks.add(task);
                         managerFromFile.fillTimeSlots(task);
                         break;

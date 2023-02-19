@@ -1,11 +1,6 @@
-id,type,name,status,description,epic,duration,startTime
-1,TASK,Сдать ТЗ,NEW,Постарайся, ,2880,19.02.2023 01:08
-7,TASK,Проверить nextId,NEW,Должно быть max + 1, , , 
-2,EPIC,Покормить кота,IN_PROGRESS,Два раза в день, ,23,20.02.2023 01:08
-6,EPIC,Функционалка,NEW,Освоить, ,0,26.02.2023 01:08
-3,SUBTASK,Помыть миски,DONE,Без мыла,2, , 
-4,SUBTASK,Положить корм,NEW,Две ложки,2, , 
-5,SUBTASK,Налить воды,NEW,Без минералов,2,23,20.02.2023 01:08
-8,SUBTASK,Тестирование,NEW,Тестировать как леди Баг и супер код,6, ,26.02.2023 01:08
+id,type,name,status,description,epic,duration,startTime,endTime
+1,EPIC,Epic,NEW,Epic description, ,2,01.01.2023 10:30,01.01.2023 11:31
+2,SUBTASK,Subtask,NEW,Subtask description,1,1,01.01.2023 10:30, 
+3,SUBTASK,Subtask1,NEW,Subtask1 description,1,1,01.01.2023 11:30, 
 
-6,1,4,5,7,8
+2

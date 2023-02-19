@@ -81,7 +81,6 @@ public class Task implements Comparable<Task> {
     }
 
     public Optional<LocalDateTime> getEndTime() {
-        //проверить, что время начала определено?
         Optional<LocalDateTime> endTime = Optional.empty();
         if (startTime.isPresent()) {
             endTime = Optional.of(startTime.get().plusMinutes(duration.orElse(0L)));
@@ -145,7 +144,15 @@ public class Task implements Comparable<Task> {
     }
 
     @Override
-    public int compareTo(Task task) {
-        return this.getId() - task.getId();
+    public int compareTo(Task task) { // не вызывается в трисете, посольку свой компаратор, но добавила)
+        if (this.getStartTime().isPresent() && task.getStartTime().isPresent()) {
+            return this.getStartTime().get().compareTo(task.getStartTime().get());
+        } else if (this.getStartTime().isPresent()) {
+            return -1;
+        } else if (task.getStartTime().isPresent()) {
+            return 1;
+        } else {
+            return this.getId() - task.getId();
+        }
     }
 }

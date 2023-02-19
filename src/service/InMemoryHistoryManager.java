@@ -24,7 +24,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (taskHistory.getNodes().containsKey(id)) {
             taskHistory.removeNode(taskHistory.getNodes().get(id));
         } else {
-            //System.out.println("Задачи с id " + id + " нет в истории просмотров");
             throw new IllegalArgumentException("Задачи с id " + id + " нет в истории просмотров");
         }
     }

@@ -650,4 +650,116 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertNotNull(history, "История не возвращается");
         assertEquals(0, history.size(), "История не пустая");
     }
+
+    @Test
+    void setEpicStatus() {
+        taskManager.addEpic(epic);
+        int epicId = epic.getId();
+
+        //пустой список подзадач
+        assertNotNull(epic.getStatus(), "Статус не возвращается");
+        assertEquals(Status.NEW, epic.getStatus(), "Статусы не совпадают.");
+
+        //все подзадачи со статусом NEW
+        taskManager.addSubtask(subtask, epicId);
+        int subtaskId = subtask.getId();
+        Subtask subtask1 = new Subtask("Subtask1", "Subtask1 description");
+        taskManager.addSubtask(subtask1, epicId);
+        int subtaskId1 = subtask1.getId();
+
+        assertNotNull(epic.getStatus(), "Статус не возвращается");
+        assertEquals(Status.NEW, epic.getStatus(), "Статусы не совпадают.");
+
+        //подзадачи со статусами NEW и DONE
+        Subtask updatedSubtask = subtask;
+        updatedSubtask.setStatus(Status.DONE);
+        taskManager.updateSubtask(updatedSubtask);
+
+        assertNotNull(epic.getStatus(), "Статус не возвращается");
+        assertEquals(Status.IN_PROGRESS, epic.getStatus(), "Статусы не совпадают.");
+
+        //все подзадачи со статусом DONE
+        updatedSubtask = subtask1;
+        updatedSubtask.setStatus(Status.DONE);
+        taskManager.updateSubtask(updatedSubtask);
+
+        assertNotNull(epic.getStatus(), "Статус не возвращается");
+        assertEquals(Status.DONE, epic.getStatus(), "Статусы не совпадают.");
+
+        //подзадачи со статусом IN_PROGRESS
+        updatedSubtask = subtask;
+        updatedSubtask.setStatus(Status.IN_PROGRESS);
+        taskManager.updateSubtask(updatedSubtask);
+
+        assertNotNull(epic.getStatus(), "Статус не возвращается");
+        assertEquals(Status.IN_PROGRESS, epic.getStatus(), "Статусы не совпадают.");
+
+        //удаление задачи
+        taskManager.removeSubtask(subtaskId);
+
+        assertNotNull(epic.getStatus(), "Статус не возвращается");
+        assertEquals(Status.DONE, epic.getStatus(), "Статусы не совпадают.");
+
+        taskManager.removeSubtask(subtaskId1);
+        assertNotNull(epic.getStatus(), "Статус не возвращается");
+        assertEquals(Status.NEW, epic.getStatus(), "Статусы не совпадают.");
+    }
+
+    @Test
+    void setEpicTime() {
+        taskManager.addEpic(epic);
+        int epicId = epic.getId();
+
+        //пустой список подзадач
+        assertNotNull(epic.getStartTime(), "Время начала не возвращается");
+        assertEquals(Optional.empty(), epic.getStartTime(), "Время начала не совпадает");
+
+        assertNotNull(epic.getDuration(), "Продолжительность не возвращается");
+        assertEquals(Optional.empty(), epic.getDuration(), "Продолжительность не совпадает");
+
+        assertNotNull(epic.getEndTime(), "Время окончания не возвращается");
+        assertEquals(Optional.empty(), epic.getEndTime(), "Время окончания не совпадает");
+
+        //задача без заданного времени
+        taskManager.addSubtask(subtask, epicId);
+        int id = subtask.getId();
+        assertNotNull(epic.getStartTime(), "Время начала не возвращается");
+        assertEquals(Optional.empty(), epic.getStartTime(), "Время начала не совпадает");
+
+        assertNotNull(epic.getDuration(), "Продолжительность не возвращается");
+        assertEquals(Optional.empty(), epic.getDuration(), "Продолжительность не совпадает");
+
+        assertNotNull(epic.getEndTime(), "Время окончания не возвращается");
+        assertEquals(Optional.empty(), epic.getEndTime(), "Время окончания не совпадает");
+
+        //задача с заданным временем
+        Subtask updatedSubtask = taskManager.getSubtask(id);
+        updatedSubtask.setStartTime(Optional.of(TEST_TIME));
+        updatedSubtask.setDuration(Optional.of(1L));
+        taskManager.updateSubtask(updatedSubtask);
+
+        assertNotNull(epic.getStartTime(), "Время начала не возвращается");
+        assertEquals(Optional.of(TEST_TIME), epic.getStartTime(), "Время начала не совпадает");
+
+        assertNotNull(epic.getDuration(), "Продолжительность не возвращается");
+        assertEquals(Optional.of(1L), epic.getDuration(), "Продолжительность не совпадает");
+
+        assertNotNull(epic.getEndTime(), "Время окончания не возвращается");
+        assertEquals(Optional.of(TEST_TIME.plusMinutes(1L)), epic.getEndTime(), "Время окончания не совпадает");
+
+        // две задачи с заданным временем
+        Subtask subtask1 = new Subtask("Subtask1", "Subtask1 description");
+        subtask1.setStartTime(Optional.of(TEST_TIME.plusMinutes(60L)));
+        subtask1.setDuration(Optional.of(1L));
+        taskManager.addSubtask(subtask1, epicId);
+
+        assertNotNull(epic.getStartTime(), "Время начала не возвращается");
+        assertEquals(Optional.of(TEST_TIME), epic.getStartTime(), "Время начала не совпадает");
+
+        assertNotNull(epic.getDuration(), "Продолжительность не возвращается");
+        assertEquals(Optional.of(2L), epic.getDuration(), "Продолжительность не совпадает");
+
+        assertNotNull(epic.getEndTime(), "Время окончания не возвращается");
+        assertEquals(Optional.of(TEST_TIME.plusMinutes(61L)), epic.getEndTime(), "Время окончания не совпадает");
+    }
 }

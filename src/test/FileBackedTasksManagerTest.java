@@ -38,13 +38,13 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         assertEquals(taskManager, taskManagerFromFile, "Менеджеры не совпадают");
 
         taskManager.addEpic(epic);
-        int epicId = epic.getId();
         taskManagerFromFile = FileBackedTasksManager.loadFromFile(file);
         assertNotNull(taskManagerFromFile, "Файл не записан");
         assertEquals(taskManager, taskManagerFromFile, "Менеджеры не совпадают");
 
         subtask.setStartTime(Optional.of(TEST_TIME));
         subtask.setDuration(Optional.of(1L));
+        int epicId = epic.getId();
         taskManager.addSubtask(subtask, epicId);
         taskManagerFromFile = FileBackedTasksManager.loadFromFile(file);
         assertNotNull(taskManagerFromFile, "Файл не записан");
@@ -73,11 +73,11 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         final int subtaskId = subtask.getId();
 
         //id,type,name,status,description,epic,duration,startTime
-        String expectedTaskToString = taskId + ",TASK,Task,NEW,Task description, , , ";
+        String expectedTaskToString = taskId + ",TASK,Task,NEW,Task description, , , , ";
         String expectedEpicToString = epicId + ",EPIC,Epic,NEW,Epic description, ,"
-                + "15," + TEST_TIME.format(Task.formatter);
+                + "15," + TEST_TIME.format(Task.formatter) + "," + TEST_TIME.plusMinutes(15L).format(Task.formatter);
         String expectedSubtaskToString = subtaskId + ",SUBTASK,Subtask,NEW,Subtask description," + epicId
-                + ",15," + TEST_TIME.format(Task.formatter);
+                + ",15," + TEST_TIME.format(Task.formatter) + ", ";
         //Task
         String taskToString = FileBackedTasksManager.toString(task);
         assertEquals(expectedTaskToString, taskToString, "Строки не совпадают");
@@ -99,8 +99,8 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         assertEquals("Чтение пустой строки невозможно", ex.getMessage());
 
         //стандартный случай
-        String taskFromString = "0,TASK,Task,NEW,Task description, , , ";
-        String subtaskFromString = "2,SUBTASK,Subtask,NEW,Subtask description,1,15,01.01.2023 10:30";
+        String taskFromString = "0,TASK,Task,NEW,Task description, , , , ";
+        String subtaskFromString = "2,SUBTASK,Subtask,NEW,Subtask description,1,15,01.01.2023 10:30, ";
 
         Task taskExpected = task;
         Subtask subtaskExpected = subtask;
@@ -137,7 +137,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         taskManager.getEpic(epicId);
         historyLine = FileBackedTasksManager.historyToString(taskManager.getHistoryManager());
         assertEquals(2, historyLine.length() / 2 + 1, "Количество задач в строке не совпадает");
-        assertEquals(taskId +"," + epicId, historyLine, "Задачи не совпадают");
+        assertEquals(taskId + "," + epicId, historyLine, "Задачи не совпадают");
     }
 
     @Test
