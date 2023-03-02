@@ -36,15 +36,15 @@ public class HttpTaskManager extends FileBackedTasksManager {
                 .collect(Collectors.toList())));
     }
 
-    public HttpTaskManager loadFromServer(String url) throws IOException, InterruptedException {
+    public static HttpTaskManager loadFromServer(String url) throws IOException, InterruptedException {
         HttpTaskManager managerFromServer = new HttpTaskManager(url);
         HistoryManager historyManager = managerFromServer.getHistoryManager();
         int maxId = 0;
 
-        String jsonString = client.load("tasks");
+        String jsonString = managerFromServer.client.load("tasks");
         if (!jsonString.isEmpty()) {
             Type tasksListType = new TypeToken<List<Task>>() {}.getType();
-            List<Task> tasks = gson.fromJson(jsonString, tasksListType);
+            List<Task> tasks = managerFromServer.gson.fromJson(jsonString, tasksListType);
             for (Task task : tasks) {
                 managerFromServer.tasks.put(task.getId(), task);
                 managerFromServer.prioritizedTasks.add(task);
@@ -54,10 +54,10 @@ public class HttpTaskManager extends FileBackedTasksManager {
                 }
             }
         }
-        jsonString = client.load("epics");
+        jsonString = managerFromServer.client.load("epics");
         if (!jsonString.isEmpty()) {
             Type epicsListType = new TypeToken<List<Epic>>() {}.getType();
-            List<Epic> epics = gson.fromJson(jsonString, epicsListType);
+            List<Epic> epics = managerFromServer.gson.fromJson(jsonString, epicsListType);
             for (Epic epic : epics) {
                 managerFromServer.epics.put(epic.getId(), epic);
                 if (epic.getId() > maxId) {
@@ -65,10 +65,10 @@ public class HttpTaskManager extends FileBackedTasksManager {
                 }
             }
         }
-        jsonString = client.load("subtasks");
+        jsonString = managerFromServer.client.load("subtasks");
         if (!jsonString.isEmpty()) {
             Type subtasksListType = new TypeToken<List<Subtask>>() {}.getType();
-            List<Subtask> subtasks = gson.fromJson(jsonString, subtasksListType);
+            List<Subtask> subtasks = managerFromServer.gson.fromJson(jsonString, subtasksListType);
             for (Subtask subtask : subtasks) {
                 managerFromServer.subtasks.put(subtask.getId(), subtask);
                 managerFromServer.prioritizedTasks.add(subtask);
@@ -78,11 +78,11 @@ public class HttpTaskManager extends FileBackedTasksManager {
                 }
             }
         }
-        jsonString = client.load("history");
+        jsonString = managerFromServer.client.load("history");
         if (!jsonString.isEmpty()) {
             //Type tasksListType = new TypeToken<List<Task>>() {}.getType();
             Type tasksListType = new TypeToken<List<Integer>>() {}.getType();
-            List<Integer> history = gson.fromJson(jsonString, tasksListType);
+            List<Integer> history = managerFromServer.gson.fromJson(jsonString, tasksListType);
             for (Integer id : history) {
                 if (managerFromServer.epics.containsKey(id)) {
                     historyManager.add(managerFromServer.epics.get(id));

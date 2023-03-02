@@ -30,14 +30,12 @@ class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
     @Test
     void save() throws IOException, InterruptedException {
         taskManager.addTask(task);
-        HttpTaskManager taskManagerFromServer = new HttpTaskManager(url);
-        taskManagerFromServer = taskManagerFromServer.loadFromServer(url);
+        HttpTaskManager taskManagerFromServer = HttpTaskManager.loadFromServer(url);
         assertNotNull(taskManagerFromServer, "Состояние не записано");
         assertEquals(taskManager, taskManagerFromServer, "Менеджеры не совпадают");
 
         taskManager.addEpic(epic);
-        taskManagerFromServer = new HttpTaskManager(url);
-        taskManagerFromServer = taskManagerFromServer.loadFromServer(url);
+        taskManagerFromServer = HttpTaskManager.loadFromServer(url);
         assertNotNull(taskManagerFromServer, "Состояние не записано");
         assertEquals(taskManager, taskManagerFromServer, "Менеджеры не совпадают");
 
@@ -47,38 +45,32 @@ class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
         subtask.setDuration(Optional.of(1L));
         taskManager.addSubtask(subtask, epicId);
 
-        taskManagerFromServer = new HttpTaskManager(url);
-        taskManagerFromServer = taskManagerFromServer.loadFromServer(url);
+        taskManagerFromServer = HttpTaskManager.loadFromServer(url);
         assertNotNull(taskManagerFromServer, "Состояние не записано");
         assertEquals(taskManager, taskManagerFromServer, "Менеджеры не совпадают");
 
         taskManager.getTask(task.getId());
-        taskManagerFromServer = new HttpTaskManager(url);
-        taskManagerFromServer = taskManagerFromServer.loadFromServer(url);
+        taskManagerFromServer = HttpTaskManager.loadFromServer(url);
         assertNotNull(taskManagerFromServer, "Состояние не записано");
         assertEquals(taskManager, taskManagerFromServer, "Менеджеры не совпадают");
 
         taskManager.getTask(task.getId());
-        taskManagerFromServer = new HttpTaskManager(url);
-        taskManagerFromServer = taskManagerFromServer.loadFromServer(url);
+        taskManagerFromServer = HttpTaskManager.loadFromServer(url);
         assertNotNull(taskManagerFromServer, "Состояние не записано");
         assertEquals(taskManager, taskManagerFromServer, "Менеджеры не совпадают");
 
         taskManager.getSubtask(subtask.getId());
-        taskManagerFromServer = new HttpTaskManager(url);
-        taskManagerFromServer = taskManagerFromServer.loadFromServer(url);
+        taskManagerFromServer = HttpTaskManager.loadFromServer(url);
         assertNotNull(taskManagerFromServer, "Состояние не записано");
         assertEquals(taskManager, taskManagerFromServer, "Менеджеры не совпадают");
 
         taskManager.getEpic(epic.getId());
-        taskManagerFromServer = new HttpTaskManager(url);
-        taskManagerFromServer = taskManagerFromServer.loadFromServer(url);
+        taskManagerFromServer = HttpTaskManager.loadFromServer(url);
         assertNotNull(taskManagerFromServer, "Состояние не записано");
         assertEquals(taskManager, taskManagerFromServer, "Менеджеры не совпадают");
 
         taskManager.removeTask(1);
-        taskManagerFromServer = new HttpTaskManager(url);
-        taskManagerFromServer = taskManagerFromServer.loadFromServer(url);
+        taskManagerFromServer = HttpTaskManager.loadFromServer(url);
         assertNotNull(taskManagerFromServer, "Состояние не записано");
         assertEquals(taskManager, taskManagerFromServer, "Менеджеры не совпадают");
     }
@@ -87,8 +79,7 @@ class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
     void loadFromServer() throws IOException, InterruptedException {
         //все тесты пересекаются с save()
         //пустой менеджер
-        HttpTaskManager taskManagerFromServer = new HttpTaskManager(url);
-        taskManagerFromServer = taskManagerFromServer.loadFromServer(url);
+        HttpTaskManager taskManagerFromServer = HttpTaskManager.loadFromServer(url);
         assertNotNull(taskManagerFromServer, "Менеджер не загружается");
     }
 

@@ -1,6 +1,7 @@
 package client;
 
 import server.KVServer;
+import service.ManagerSaveException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,14 +16,25 @@ public class KVTaskClient {
     private final String API_TOKEN;
     private final HttpClient client;
 
-    public KVTaskClient(String url) throws IOException, InterruptedException {
+    public KVTaskClient(String url) throws ManagerSaveException {
         //URL к серверу хранилища.
         this.url = url;
         URI uri = URI.create(url + "/register");
         client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        API_TOKEN = response.body();
+        HttpResponse<String> response = null;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Код состояния: " + response.statusCode());
+            System.out.println("Ответ: " + response.body());
+            if (response.statusCode() != 200) {
+                throw new ManagerSaveException("Код состояния: "
+                        + response.statusCode() + " Ответ: " + response.body());
+            }
+            API_TOKEN = response.body();
+        } catch (IOException | InterruptedException e) {
+            throw new ManagerSaveException("Ошибка выполнения запроса ресурса по url-адресу: " + url);
+        }
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -46,12 +58,16 @@ public class KVTaskClient {
         HttpRequest request = HttpRequest.newBuilder().uri(uri).POST(body).build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
+                throw new ManagerSaveException("Код состояния: "
+                        + response.statusCode() + " Ответ: " + response.body());
+            }
             System.out.println("Код ответа: " + response.statusCode());
             System.out.println("Тело ответа: " + response.body());
         } catch (IOException | InterruptedException e) {
             System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + url + "', возникла ошибка.\n" +
                     "Проверьте, пожалуйста, адрес и повторите попытку.");
-            throw new RuntimeException(e);
+            throw new ManagerSaveException("Ошибка выполнения запроса ресурса по url-адресу: " + url);
         }
     }
 
@@ -61,6 +77,10 @@ public class KVTaskClient {
         HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
+                throw new ManagerSaveException("Код состояния: "
+                        + response.statusCode() + " Ответ: " + response.body());
+            }
             return response.body();
         } catch (IOException | InterruptedException e) {
             System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + url + "', возникла ошибка.\n" +
