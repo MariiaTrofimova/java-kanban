@@ -2,13 +2,20 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 
+import server.KVServer;
 import service.HistoryManager;
-import service.InMemoryTaskManager;
+import service.Managers;
+import service.TaskManager;
+
+import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args) {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+    public static void main(String[] args) throws IOException, InterruptedException {
+        //InMemoryTaskManager taskManager = new InMemoryTaskManager();
+        KVServer server = new KVServer();
+        server.start();
+        TaskManager taskManager = Managers.getDefault();
         taskManager.clearTasks();
         taskManager.clearEpics();
 
@@ -69,6 +76,8 @@ public class Main {
                 + "-".repeat(20));
         taskManager.removeEpic(3);
         printHistory(taskManager.getHistoryManager());
+
+        server.stop();
     }
 
     public static void printHistory(HistoryManager historyManager) {
@@ -80,7 +89,7 @@ public class Main {
         }
     }
 
-    public static void printLists(InMemoryTaskManager taskManager) {
+    public static void printLists(TaskManager taskManager) {
         System.out.println("Список задач:");
         if (!taskManager.getTasks().isEmpty()) {
             for (Task task : taskManager.getTasks()) {

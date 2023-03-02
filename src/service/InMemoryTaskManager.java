@@ -86,6 +86,7 @@ public class InMemoryTaskManager implements TaskManager {
     public List<Task> getPrioritizedTasks() {
         if (prioritizedTasks.isEmpty()) {
             System.out.println("Список задач по приоритету пуст");
+            return Collections.EMPTY_LIST;
         }
         return new ArrayList<>(prioritizedTasks);
     }
@@ -142,6 +143,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     protected boolean isTimeFree(Task task) {
         boolean isTimeFree = true;
+        /*if (task.getStartTime() == null) {
+            return true;
+        }*/
         if (task.getStartTime().isPresent()) {
             //валидация времени
             LocalDateTime startTimeCell =
@@ -429,6 +433,21 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setStartTime(startTime);
         epic.setDuration(Optional.of(duration[0]));
         epic.setEndTime(endTime[0]);
+    }
+
+    public boolean isTaskPresent(int id) {
+        if (tasks.containsKey(id)) return true;
+        return false;
+    }
+
+    public boolean isSubtaskPresent(int id) {
+        if (subtasks.containsKey(id)) return true;
+        return false;
+    }
+
+    public boolean isEpicPresent(int id) {
+        if (epics.containsKey(id)) return true;
+        return false;
     }
 
     @Override

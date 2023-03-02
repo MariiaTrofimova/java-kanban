@@ -19,13 +19,13 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
     @Override
     void setTaskManager() {
-        taskManager = new FileBackedTasksManager(file);
+        taskManager = new FileBackedTasksManager(path);
     }
 
     @Test
     void save() {
-        File fileEmptyPath = new File("");
-        FileBackedTasksManager taskManagerEmptyPath = new FileBackedTasksManager(fileEmptyPath);
+        //File fileEmptyPath = new File("");
+        FileBackedTasksManager taskManagerEmptyPath = new FileBackedTasksManager("");
         ManagerSaveException ex = assertThrows(
                 ManagerSaveException.class,
                 taskManagerEmptyPath::save
@@ -33,12 +33,12 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         assertEquals("Ошибка при сохранениив в файл", ex.getMessage());
 
         taskManager.addTask(task);
-        FileBackedTasksManager taskManagerFromFile = FileBackedTasksManager.loadFromFile(file);
+        FileBackedTasksManager taskManagerFromFile = FileBackedTasksManager.loadFromFile(path);
         assertNotNull(taskManagerFromFile, "Файл не записан");
         assertEquals(taskManager, taskManagerFromFile, "Менеджеры не совпадают");
 
         taskManager.addEpic(epic);
-        taskManagerFromFile = FileBackedTasksManager.loadFromFile(file);
+        taskManagerFromFile = FileBackedTasksManager.loadFromFile(path);
         assertNotNull(taskManagerFromFile, "Файл не записан");
         assertEquals(taskManager, taskManagerFromFile, "Менеджеры не совпадают");
 
@@ -46,17 +46,17 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         subtask.setDuration(Optional.of(1L));
         int epicId = epic.getId();
         taskManager.addSubtask(subtask, epicId);
-        taskManagerFromFile = FileBackedTasksManager.loadFromFile(file);
+        taskManagerFromFile = FileBackedTasksManager.loadFromFile(path);
         assertNotNull(taskManagerFromFile, "Файл не записан");
         assertEquals(taskManager, taskManagerFromFile, "Менеджеры не совпадают");
 
         taskManager.getTask(task.getId());
-        taskManagerFromFile = FileBackedTasksManager.loadFromFile(file);
+        taskManagerFromFile = FileBackedTasksManager.loadFromFile(path);
         assertNotNull(taskManagerFromFile, "Файл не записан");
         assertEquals(taskManager, taskManagerFromFile, "Менеджеры не совпадают");
 
         taskManager.getEpic(epicId);
-        taskManagerFromFile = FileBackedTasksManager.loadFromFile(file);
+        taskManagerFromFile = FileBackedTasksManager.loadFromFile(path);
         assertNotNull(taskManagerFromFile, "Файл не записан");
         assertEquals(taskManager, taskManagerFromFile, "Менеджеры не совпадают");
     }
@@ -163,7 +163,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     void loadFromFile() {
         //все тесты пересекаются с save()
         //пустой файл
-        FileBackedTasksManager taskManagerFromFile = new FileBackedTasksManager(file);
+        FileBackedTasksManager taskManagerFromFile = new FileBackedTasksManager(path);
         assertNotNull(taskManagerFromFile);
         assertEquals(taskManager, taskManagerFromFile, "Менеджеры не совпадают");
     }

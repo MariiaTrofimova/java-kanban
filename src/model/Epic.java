@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class Epic extends Task {
+
     private final ArrayList<Integer> subtaskIds;
 
     private Optional<LocalDateTime> endTime = Optional.empty();
@@ -14,12 +15,14 @@ public class Epic extends Task {
         super(id, title, description);
         subtaskIds = new ArrayList<>();
         status = Status.NEW;
+        this.taskType = TaskType.EPIC;
     }
 
     public Epic(String title, String description) {
         super(title, description);
         subtaskIds = new ArrayList<>();
         status = Status.NEW;
+        this.taskType = TaskType.EPIC;
     }
 
     public ArrayList<Integer> getSubtaskIds() {

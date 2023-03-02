@@ -12,17 +12,18 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private final File file;
+    String path;
 
-    public FileBackedTasksManager(File file) {
+    public FileBackedTasksManager(String path) {
         super();
-        this.file = file;
+        this.path = path;
+        //this.file = new File(path);
     }
 
     public static void main(String[] args) {
         String path = "src" + File.separator + "resources" + File.separator + "log.csv";
-        File file = new File(path);
-        FileBackedTasksManager manager = new FileBackedTasksManager(file);
+        //File file = new File(path);
+        FileBackedTasksManager manager = new FileBackedTasksManager(path);
 
         //Заведите несколько разных задач, эпиков и подзадач.
         manager.addTask(new Task("Сдать ТЗ", "Постарайся"));
@@ -64,7 +65,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         //Создайте новый FileBackedTasksManager менеджер из этого же файла.
         //Проверьте, что история просмотра восстановилась верно
         // и все задачи, эпики, подзадачи, которые были в старом, есть в новом менеджере.
-        FileBackedTasksManager managerFromFile = loadFromFile(file);
+        FileBackedTasksManager managerFromFile = loadFromFile(path);
         System.out.println("-".repeat(10) + "Содержимое менеджера из файла" + "-".repeat(10));
         System.out.println("id,type,name,status,description,epic,duration,startTime,endTime");
         printManager(managerFromFile);
@@ -96,7 +97,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public void save() throws ManagerSaveException {
-        try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8)) {
+        try (FileWriter fileWriter = new FileWriter(path, StandardCharsets.UTF_8)) {
             fileWriter.write("id,type,name,status,description,epic,duration,startTime,endTime\n");
             if (!tasks.isEmpty()) {
                 for (Task task : getTasks()) {
@@ -216,11 +217,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return history;
     }
 
-    public static FileBackedTasksManager loadFromFile(File file) {
-        FileBackedTasksManager managerFromFile = new FileBackedTasksManager(file);
+    public static FileBackedTasksManager loadFromFile(String path) {
+        FileBackedTasksManager managerFromFile = new FileBackedTasksManager(path);
         try {
             int maxId = 0;
-            String content = Files.readString(Path.of(String.valueOf(file)));
+            String content = Files.readString(Path.of(path));
             String[] lines = content.split("\n");
             for (int i = 1; i < lines.length - 2; i++) {
                 Task task = managerFromFile.fromString(lines[i]);
@@ -229,22 +230,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     maxId = task.getId();
                 }
                 switch (taskType) {
-                    case EPIC:
-                        managerFromFile.epics.put(task.getId(), (Epic) task);
-                        break;
-                    case SUBTASK:
+                    case EPIC -> managerFromFile.epics.put(task.getId(), (Epic) task);
+                    case SUBTASK -> {
                         managerFromFile.subtasks.put(task.getId(), (Subtask) task);
                         int epicId = ((Subtask) task).getEpicId();
                         Epic epic = managerFromFile.epics.get(epicId);
                         epic.addSubtask(task.getId());
                         managerFromFile.prioritizedTasks.add(task);
                         managerFromFile.fillTimeSlots(task);
-                        break;
-                    case TASK:
+                    }
+                    case TASK -> {
                         managerFromFile.tasks.put(task.getId(), task);
                         managerFromFile.prioritizedTasks.add(task);
                         managerFromFile.fillTimeSlots(task);
-                        break;
+                    }
                 }
             }
             List<Integer> history = historyFromString(lines[lines.length - 1]);
@@ -377,11 +376,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         FileBackedTasksManager that = (FileBackedTasksManager) o;
-        return Objects.equals(file, that.file);
+        return Objects.equals(path, that.path);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), file);
+        return Objects.hash(super.hashCode(), path);
     }
 }

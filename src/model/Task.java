@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class Task implements Comparable<Task> {
+    protected TaskType taskType;
     protected int id;
     protected String title;
     protected String description;
@@ -26,6 +27,7 @@ public class Task implements Comparable<Task> {
         this.status = status;
         this.duration = duration;
         this.startTime = startTime;
+        this.taskType = TaskType.TASK;
     }
 
     public Task(int id, String title, String description, Status status) {
@@ -33,6 +35,7 @@ public class Task implements Comparable<Task> {
         this.title = title;
         this.description = description;
         this.status = status;
+        this.taskType = TaskType.TASK;
     }
 
     public Task(int id, String title, String description) {
@@ -40,12 +43,18 @@ public class Task implements Comparable<Task> {
         this.title = title;
         this.description = description;
         status = Status.NEW;
+        this.taskType = TaskType.TASK;
     }
 
     public Task(String title, String description) {
         this.title = title;
         this.description = description;
         status = Status.NEW;
+        this.taskType = TaskType.TASK;
+    }
+
+    public TaskType getTaskType() {
+        return taskType;
     }
 
     public int getId() {

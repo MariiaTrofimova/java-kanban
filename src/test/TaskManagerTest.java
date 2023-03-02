@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.TaskManager;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +17,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 abstract class TaskManagerTest<T extends TaskManager> {
-    //Со стандартным поведением.
-    //С пустым списком задач.
-    //С неверным id (пустой и/или несуществующий).
     protected T taskManager;
     protected Task task;
     protected Epic epic;
@@ -26,16 +24,20 @@ abstract class TaskManagerTest<T extends TaskManager> {
     protected static final LocalDateTime TEST_TIME =
             LocalDateTime.of(2023, 1, 1, 10, 30);
 
-    void setTaskManager() {
+    void setTaskManager() throws IOException, InterruptedException {
     }
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException, InterruptedException {
         setTaskManager();
         task = new Task("Task", "Task description");
         epic = new Epic("Epic", "Epic description");
         subtask = new Subtask("Subtask", "Subtask description");
     }
+
+    //Со стандартным поведением.
+    //С пустым списком задач.
+    //С неверным id (пустой и/или несуществующий).
 
     @Test
     void getTasksList() {
